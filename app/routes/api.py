@@ -9,7 +9,9 @@ api_bp = Blueprint("api", __name__)
 def _iso(dt):
     return dt.isoformat() if dt else None
 
-
+@api_bp.get('/health')
+def health():
+    return {'status':'ok'}
 @api_bp.post("/tickets")
 @jwt_required
 def create_ticket():
