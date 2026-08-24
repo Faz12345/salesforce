@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<section class="form-page">
+  <a class="back-link" href="{{ url_for('views.index') }}">← Back to tickets</a>
+  <h1>Your profile</h1>
+  <p class="subhead">{% if user.role == 'admin' %}Update the details used by your support team.{% else %}Only administrators can edit user profiles.{% endif %}</p>
+  {% if user.role == 'admin' %}<form method="POST" class="ticket-form">
+    <div class="form-row"><label for="name">Full name</label><input id="name" name="name" value="{{ user.name }}" required></div>
+    <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" value="{{ user.email }}" required></div>
+    <button class="btn-primary" type="submit">Save profile</button>
+  </form>{% endif %}
+  <dl class="meta-list"><dt>Name</dt><dd>{{ user.name }}</dd><dt>Email</dt><dd>{{ user.email }}</dd><dt>Role</dt><dd>{{ user.role }}</dd></dl>
+</section>
+{% endblock %}

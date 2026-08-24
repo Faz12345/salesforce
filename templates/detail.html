@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ ticket.ticket_id }}{% endblock %}
+
+{% block content %}
+<section class="detail-page">
+  <a class="back-link" href="{{ url_for('views.index') }}">← Back to tickets</a>
+
+  <div class="detail-head">
+    <div>
+      <span class="ticket-id ticket-id-lg">{{ ticket.ticket_id }}</span>
+      <h1>{{ ticket.subject }}</h1>
+    </div>
+    <span class="status-pill status-pill-lg status-{{ ticket.status|replace(' ', '')|lower }}">{{ ticket.status }}</span>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-main">
+      <div class="panel">
+        <h2 class="panel-title">Description</h2>
+        <p class="description-text">{{ ticket.description }}</p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Notes ({{ ticket.notes|length }})</h2>
+        {% if ticket.notes %}
+          <ul class="notes-list">
+            {% for note in ticket.notes %}
+              <li class="note-item">
+                <p>{{ note.note_text }}</p>
+                <span class="ts">{{ note.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">No notes yet. Add one below when you update the status.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <aside class="detail-side">
+      <div class="panel">
+        <h2 class="panel-title">Customer</h2>
+        <dl class="meta-list">
+          <dt>Name</dt><dd>{{ ticket.customer_name }}</dd>
+          <dt>Email</dt><dd><a href="mailto:{{ ticket.customer_email }}">{{ ticket.customer_email }}</a></dd>
+          <dt>Opened</dt><dd class="ts">{{ ticket.created_at.strftime('%d %b %Y, %H:%M') }}</dd>
+          <dt>Last updated</dt><dd class="ts">{{ ticket.updated_at.strftime('%d %b %Y, %H:%M') }}</dd>
+        </dl>
+      </div>
+
+      {% if g.current_user.role == 'admin' %}<div class="panel">
+        <h2 class="panel-title">Update ticket</h2>
+        <form method="POST" action="{{ url_for('views.update_ticket_form', ticket_id=ticket.ticket_id) }}" class="update-form">
+          <div class="form-row">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              {% for s in statuses %}
+                <option value="{{ s }}" {{ 'selected' if s == ticket.status else '' }}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="notes">Add a note</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Optional — what changed, what you told the customer…"></textarea>
+          </div>
+          <button type="submit" class="btn-primary btn-block">Save update</button>
+        </form>
+      </div>{% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

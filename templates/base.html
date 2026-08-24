@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dispatch{% endblock %} · Support CRM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('views.index') }}">
+      <span class="brand-mark">◧</span>
+      <span class="brand-text">Dispatch</span>
+    </a>
+    <nav class="topbar-nav">
+      {% if g.current_user %}
+        <a href="{{ url_for('views.index') }}">Tickets</a>
+        <a href="{{ url_for('views.profile') }}">{{ g.current_user.name }}</a>
+        {% if g.current_user.role == 'admin' %}<a href="{{ url_for('views.admin_users') }}">Admin</a>{% endif %}
+        <a class="btn-new" href="{{ url_for('views.new_ticket') }}">+ New ticket</a>
+        <a href="{{ url_for('views.logout') }}">Log out</a>
+      {% else %}
+        <a href="{{ url_for('views.login') }}">Log in</a>
+        <a class="btn-new" href="{{ url_for('views.signup') }}">Sign up</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="page">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">Support CRM · internal dispatch console</footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}New ticket{% endblock %}
+
+{% block content %}
+<section class="form-page">
+  <a class="back-link" href="{{ url_for('views.index') }}">← Back to tickets</a>
+  <h1>Log a new ticket</h1>
+  <p class="subhead">Capture what the customer told you. You can add more detail later.</p>
+
+  <form method="POST" class="ticket-form" novalidate>
+    <div class="form-row">
+      <label for="customer_name">Customer name</label>
+      <input type="text" id="customer_name" name="customer_name" value="{{ form.get('customer_name', '') }}" required>
+    </div>
+
+    <div class="form-row">
+      <label for="customer_email">Customer email</label>
+      <input type="email" id="customer_email" name="customer_email" value="{{ form.get('customer_email', '') }}" required>
+    </div>
+
+    <div class="form-row">
+      <label for="subject">Issue title</label>
+      <input type="text" id="subject" name="subject" value="{{ form.get('subject', '') }}" placeholder="e.g. Can't reset password" required>
+    </div>
+
+    <div class="form-row">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="6" placeholder="What happened, steps to reproduce, anything the customer shared…" required>{{ form.get('description', '') }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Create ticket</button>
+      <a class="btn-secondary" href="{{ url_for('views.index') }}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

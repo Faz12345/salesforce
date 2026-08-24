@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admin users{% endblock %}
+{% block content %}
+<section>
+  <a class="back-link" href="{{ url_for('views.index') }}">← Back to tickets</a>
+  <h1>Team accounts</h1>
+  <p class="subhead">Manage roles and access for your support team.</p>
+  <div class="ticket-table-wrap">
+    <table class="ticket-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>{% for user in users %}<tr><td><input data-user="{{ user.user_id }}" data-field="name" value="{{ user.name }}"></td><td><input data-user="{{ user.user_id }}" data-field="email" type="email" value="{{ user.email }}"></td><td><select data-user="{{ user.user_id }}" data-field="role"><option {{ 'selected' if user.role == 'user' else '' }}>user</option><option {{ 'selected' if user.role == 'admin' else '' }}>admin</option></select></td><td>{{ 'Active' if user.is_active else 'Disabled' }}</td><td><button class="btn-secondary user-save" data-user="{{ user.user_id }}">Save</button></td></tr>{% endfor %}</tbody></table>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script>
+document.querySelectorAll('.user-save').forEach((button) => button.addEventListener('click', async () => {
+  const userId = button.dataset.user;
+  const role = document.querySelector(`[data-user="${userId}"][data-field="role"]`).value;
+  const name = document.querySelector(`[data-user="${userId}"][data-field="name"]`).value;
+  const email = document.querySelector(`[data-user="${userId}"][data-field="email"]`).value;
+  const response = await fetch(`/api/auth/admin/users/${userId}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, email, role})});
+  if (response.ok) location.reload(); else alert((await response.json()).error || 'Could not update user');
+}));
+</script>{% endblock %}

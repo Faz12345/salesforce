@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <span class="eyebrow">NEW TEAM MEMBER</span>
+  <h1>Create your account</h1>
+  <p class="subhead">Join the support workspace as a user.</p>
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+  <form method="POST" class="ticket-form">
+    <div class="form-row"><label for="name">Full name</label><input id="name" name="name" autocomplete="name" required></div>
+    <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
+    <div class="form-row"><label for="password">Password <span class="hint">8+ characters</span></label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
+    <button class="btn-primary btn-block" type="submit">Create account</button>
+  </form>
+  <p class="auth-links">Already registered? <a href="{{ url_for('views.login') }}">Log in</a></p>
+</section>
+{% endblock %}

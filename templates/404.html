@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Not found{% endblock %}
+{% block content %}
+<section class="empty-page">
+  <span class="empty-mark">◧</span>
+  <h1>Nothing dispatched here.</h1>
+  <p class="subhead">That ticket doesn't exist, or the link is off.</p>
+  <a class="btn-primary" href="{{ url_for('views.index') }}">Back to tickets</a>
+</section>
+{% endblock %}

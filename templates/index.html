@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<section class="board-header">
+  <div class="board-title">
+    <h1>Tickets</h1>
+    <p class="subhead">Every conversation your team owes a customer, in one queue.</p>
+  </div>
+
+  <div class="counts-strip">
+    {% for label in ['All'] + statuses %}
+      <a
+        class="count-pill count-{{ label|replace(' ', '')|lower }} {{ 'is-active' if active_status == label else '' }}"
+        href="{{ url_for('views.index', status=(None if label == 'All' else label), search=search or None) }}"
+      >
+        <span class="count-dot"></span>
+        <span class="count-label">{{ label }}</span>
+        <span class="count-num">{{ counts[label] }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="search-row">
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+    <input
+      type="search"
+      id="ticket-search"
+      placeholder="Search by name, ID, email, or description…"
+      value="{{ search }}"
+      autocomplete="off"
+    >
+  </div>
+</section>
+
+<section class="ticket-table-wrap">
+  <table class="ticket-table" id="ticket-table">
+    <thead>
+      <tr>
+        <th class="col-id">Ticket ID</th>
+        <th class="col-name">Customer</th>
+        <th class="col-subject">Issue</th>
+        <th class="col-status">Status</th>
+        <th class="col-date">Opened</th>
+      </tr>
+    </thead>
+    <tbody id="ticket-table-body">
+      {% include "_ticket_rows.html" %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.__ACTIVE_STATUS__ = {{ (active_status if active_status != 'All' else '')|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

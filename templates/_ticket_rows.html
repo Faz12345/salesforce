@@ -1,0 +1,24 @@
+{% if tickets %}
+  {% for t in tickets %}
+  <tr onclick="window.location='{{ url_for('views.ticket_detail', ticket_id=t.ticket_id) }}'">
+    <td class="col-id"><span class="ticket-id">{{ t.ticket_id }}</span></td>
+    <td class="col-name">
+      <span class="cust-name">{{ t.customer_name }}</span>
+    </td>
+    <td class="col-subject">{{ t.subject }}</td>
+    <td class="col-status">
+      <span class="status-pill status-{{ t.status|replace(' ', '')|lower }}">{{ t.status }}</span>
+    </td>
+    <td class="col-date"><span class="ts">{{ t.created_at.strftime('%d %b %Y, %H:%M') }}</span></td>
+  </tr>
+  {% endfor %}
+{% else %}
+  <tr class="empty-row">
+    <td colspan="5">
+      <div class="empty-state">
+        <p>No tickets match this view.</p>
+        <a href="{{ url_for('views.new_ticket') }}">Create the first one →</a>
+      </div>
+    </td>
+  </tr>
+{% endif %}
