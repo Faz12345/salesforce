@@ -331,6 +331,17 @@ h1 {
   font-size: 14.5px;
 }
 .btn-secondary:hover { background: var(--line-soft); text-decoration: none; }
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid #F2CFC5;
+  padding: 11px 20px;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #F6DCD5; }
 .btn-block { width: 100%; }
 
 /* ---------- Authentication ---------- */

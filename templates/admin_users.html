@@ -7,7 +7,7 @@
   <p class="subhead">Manage roles and access for your support team.</p>
   <div class="ticket-table-wrap">
     <table class="ticket-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
-    <tbody>{% for user in users %}<tr><td><input data-user="{{ user.user_id }}" data-field="name" value="{{ user.name }}"></td><td><input data-user="{{ user.user_id }}" data-field="email" type="email" value="{{ user.email }}"></td><td><select data-user="{{ user.user_id }}" data-field="role"><option {{ 'selected' if user.role == 'user' else '' }}>user</option><option {{ 'selected' if user.role == 'admin' else '' }}>admin</option></select></td><td>{{ 'Active' if user.is_active else 'Disabled' }}</td><td><button class="btn-secondary user-save" data-user="{{ user.user_id }}">Save</button></td></tr>{% endfor %}</tbody></table>
+    <tbody>{% for user in users %}<tr><td><input data-user="{{ user.user_id }}" data-field="name" value="{{ user.name }}"></td><td><input data-user="{{ user.user_id }}" data-field="email" type="email" value="{{ user.email }}"></td><td><select data-user="{{ user.user_id }}" data-field="role"><option {{ 'selected' if user.role == 'user' else '' }}>user</option><option {{ 'selected' if user.role == 'admin' else '' }}>admin</option></select></td><td><select data-user="{{ user.user_id }}" data-field="is_active"><option value="true" {{ 'selected' if user.is_active else '' }}>Active</option><option value="false" {{ 'selected' if not user.is_active else '' }}>Disabled</option></select></td><td><button class="btn-secondary user-save" data-user="{{ user.user_id }}">Save</button>{% if user.user_id != g.current_user.user_id %}<button class="btn-danger user-delete" data-user="{{ user.user_id }}">Delete</button>{% endif %}</td></tr>{% endfor %}</tbody></table>
   </div>
 </section>
 {% endblock %}
@@ -17,7 +17,13 @@ document.querySelectorAll('.user-save').forEach((button) => button.addEventListe
   const role = document.querySelector(`[data-user="${userId}"][data-field="role"]`).value;
   const name = document.querySelector(`[data-user="${userId}"][data-field="name"]`).value;
   const email = document.querySelector(`[data-user="${userId}"][data-field="email"]`).value;
-  const response = await fetch(`/api/auth/admin/users/${userId}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, email, role})});
+  const isActive = document.querySelector(`[data-user="${userId}"][data-field="is_active"]`).value === 'true';
+  const response = await fetch(`/api/auth/admin/users/${userId}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, email, role, is_active: isActive})});
   if (response.ok) location.reload(); else alert((await response.json()).error || 'Could not update user');
+}));
+document.querySelectorAll('.user-delete').forEach((button) => button.addEventListener('click', async () => {
+  if (!window.confirm('Delete this user? This action cannot be undone.')) return;
+  const response = await fetch(`/api/auth/admin/users/${button.dataset.user}`, {method: 'DELETE'});
+  if (response.ok) location.reload(); else alert((await response.json()).error || 'Could not delete user');
 }));
 </script>{% endblock %}

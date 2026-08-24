@@ -143,15 +143,42 @@ def update_user(user_id):
         return jsonify({"error": "Name cannot be empty"}), 400
     if "email" in data and not _EMAIL_RE.match(user_model.normalize_email(data["email"])):
         return jsonify({"error": "A valid email is required"}), 400
+    if "role" in data and data["role"] not in ("user", "admin"):
+        return jsonify({"error": "Role must be user or admin"}), 400
+    if "is_active" in data and not isinstance(data["is_active"], bool):
+        return jsonify({"error": "is_active must be a boolean"}), 400
+    removes_active_admin = (
+        user.get("role") == "admin"
+        and user.get("is_active")
+        and (data.get("role") == "user" or data.get("is_active") is False)
+    )
+    if removes_active_admin and user_model.count_active_admins() <= 1:
+        return jsonify({"error": "You cannot remove the last active administrator"}), 400
     try:
         if "name" in data or "email" in data:
             user = user_model.update_profile(user_id, name=data.get("name"), email=data.get("email"))
     except DuplicateKeyError:
         return jsonify({"error": "Email is already registered"}), 409
     if "role" in data:
-        if data["role"] not in ("user", "admin"):
-            return jsonify({"error": "Role must be user or admin"}), 400
         user = user_model.set_user_role(user_id, data["role"])
     if "is_active" in data:
-        user = user_model.set_user_status(user_id, bool(data["is_active"]))
+        user = user_model.set_user_status(user_id, data["is_active"])
     return jsonify({"user": _public_user(user)})
+
+
+@auth_bp.delete("/admin/users/<user_id>")
+@auth.admin_required
+def delete_user(user_id):
+    user = user_model.find_by_id(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if user_id == g.current_user["user_id"]:
+        return jsonify({"error": "You cannot delete your own account"}), 400
+    if (
+        user.get("role") == "admin"
+        and user.get("is_active")
+        and user_model.count_active_admins() <= 1
+    ):
+        return jsonify({"error": "You cannot delete the last active administrator"}), 400
+    user_model.delete_user(user_id)
+    return jsonify({"message": "User deleted"})

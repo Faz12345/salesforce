@@ -107,6 +107,18 @@ def list_users():
     return [_serialize(user) for user in _db().users.find().sort("created_at", 1)]
 
 
+def count_active_admins():
+    return _db().users.count_documents({"role": "admin", "is_active": True})
+
+
+def delete_user(user_id):
+    result = _db().users.delete_one({"user_id": user_id})
+    if result.deleted_count:
+        _db().password_reset_tokens.delete_many({"user_id": user_id})
+        return True
+    return False
+
+
 def set_user_status(user_id, is_active):
     _db().users.update_one(
         {"user_id": user_id},

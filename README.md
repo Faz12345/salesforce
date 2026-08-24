@@ -30,6 +30,7 @@ Built with Flask, MongoDB, Jinja2, JWT authentication, and a responsive server-r
 | View own profile | Yes | Yes |
 | Edit profiles | No | Yes |
 | Manage roles and account status | No | Yes |
+| Delete user accounts | No | Yes |
 
 ## Technology stack
 
@@ -163,6 +164,7 @@ Authorization: Bearer <access-token>
 | `POST` | `/api/auth/reset-password` | Consume a reset token |
 | `GET` | `/api/auth/admin/users` | List users as an admin |
 | `PATCH` | `/api/auth/admin/users/<user_id>` | Manage a user as an admin |
+| `DELETE` | `/api/auth/admin/users/<user_id>` | Delete a user as an admin |
 
 ### Tickets
 
